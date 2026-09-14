@@ -51,3 +51,22 @@ jobs:
         with:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "Deploying to server..."
+            docker pull ghcr.io/lyyppppp/ci-cd-demo:${{ github.sha }}
+            docker stop ci-cd-demo || true
+            docker rm ci-cd-demo || true
+            docker run -d --name ci-cd-demo -p 3000:3000 ghcr.io/lyyppppp/ci-cd-demo:${{ github.sha }}
+            echo "Deploy complete!"
