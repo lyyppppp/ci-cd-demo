@@ -2,11 +2,11 @@ const express = require('express');
 const app = express();
 
 app.get('/',(req,res) => {
-  res.josn({ message: 'HALLO from CI/CD!' });
+  res.json({ message: 'HALLO from CI/CD!' });
 });
 
 app.get('/health',(req,res) => {
-  res.josn{ status: 'healthy' });
+  res.json({ status: 'healthy' });
 });
 
 module.exports = app;
