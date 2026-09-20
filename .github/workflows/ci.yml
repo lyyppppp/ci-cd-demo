@@ -57,18 +57,16 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Simulate deploy
-        run: |
-          echo "=========================================="
-          echo "模拟部署到服务器"
-          echo "=========================================="
-          echo "镜像地址: ghcr.io/lyyppppp/ci-cd-demo:${{ github.sha }}"
-          echo ""
-          echo "实际部署时会执行以下命令："
-          echo "  docker pull ghcr.io/lyyppppp/ci-cd-demo:${{ github.sha }}"
-          echo "  docker stop ci-cd-demo || true"
-          echo "  docker rm ci-cd-demo || true"
-          echo "  docker run -d --name ci-cd-demo -p 3000:3000 ghcr.io/lyyppppp/ci-cd-demo:${{ github.sha }}"
-          echo ""
-          echo "✅ 模拟部署完成！"
-          echo "=========================================="
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "Deploying to server..."
+            docker pull ghcr.io/lyyppppp/ci-cd-demo:${{ github.sha }}
+            docker stop ci-cd-demo || true
+            docker rm ci-cd-demo || true
+            docker run -d --name ci-cd-demo -p 3000:3000 ghcr.io/lyyppppp/ci-cd-demo:${{ github.sha }}
+            echo "Deploy complete!"
