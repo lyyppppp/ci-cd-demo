@@ -3,7 +3,7 @@ stages:
 
 test:
   stage: test
-  image: registry.cn-hangzhou.aliyuncs.com/library/node:18-alpine
+  image: docker.m.daocloud.io/library/node:18-alpine
   script:
     - npm ci
     - npm test
