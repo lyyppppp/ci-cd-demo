@@ -1,0 +1,18 @@
+stages:
+  - test
+  - build
+
+test:
+  stage: test
+  image: node:18-alpine
+  script:
+    - npm ci
+    - npm test
+
+build:
+  stage: build
+  image: docker:24-cli
+  services:
+    - docker:24-dind
+  script:
+    - docker build -t myapp:$CI_COMMIT_SHA .
