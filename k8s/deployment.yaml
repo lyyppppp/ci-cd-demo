@@ -17,5 +17,4 @@ spec:
         image: ghcr.io/lyyppppp/ci-cd-demo:5105d3caefb938a0e56f4b3edcb4ceb33694eea6
         ports:
         - containerPort: 3000
----
 
