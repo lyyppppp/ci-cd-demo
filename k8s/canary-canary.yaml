@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp-canary
+  template:
+    metadata:
+      labels:
+        app: myapp-canary
+    spec:
+      containers:
+      - name: myapp
+        image: ghcr.io/lyyppppp/ci-cd-demo:5105d3caefb938a0e56f4b3edcb4ceb33694eea6
+        ports:
+        - containerPort: 3000
