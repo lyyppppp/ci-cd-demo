@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-bg-svc
+spec:
+  selector:
+    app: myapp
+    version: blue    # 当前指向蓝色
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: NodePort
