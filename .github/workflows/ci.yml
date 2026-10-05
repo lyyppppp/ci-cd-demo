@@ -52,21 +52,21 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-  deploy:
+  update-k8s:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1.0.0
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            echo "Deploying to server..."
-            docker pull ghcr.io/lyyppppp/ci-cd-demo:${{ github.sha }}
-            docker stop ci-cd-demo || true
-            docker rm ci-cd-demo || true
-            docker run -d --name ci-cd-demo -p 3000:3000 ghcr.io/lyyppppp/ci-cd-demo:${{ github.sha }}
-            echo "Deploy complete!"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update image tag in k8s/deployment.yaml
+        run: |
+          sed -i "s|image: ghcr.io/lyyppppp/ci-cd-demo:.*|image: ghcr.io/lyyppppp/ci-cd-demo:${{ github.sha }}|" k8s/deployment.yaml
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add k8s/deployment.yaml
+          git commit -m "Update image tag to ${{ github.sha }}"
+          git push
